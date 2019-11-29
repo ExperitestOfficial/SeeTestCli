@@ -6,7 +6,7 @@ import picocli.CommandLine;
 		subcommands = {
 				GroupsList.class,
 				GroupsMove.class
-		}, description = {"Devices group"},
+		}, description = {"Devices group operations"},
 		name = "groups"
 )
 public class Groups implements Runnable{

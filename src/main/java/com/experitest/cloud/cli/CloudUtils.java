@@ -2,6 +2,7 @@ package com.experitest.cloud.cli;
 
 import com.experitest.cloud.v2.AccessKeyCloudAuthentication;
 import com.experitest.cloud.v2.Cloud;
+import com.experitest.cloud.v2.CloudClientDebug;
 import com.experitest.cloud.v2.ProxyInformation;
 import com.experitest.cloud.v2.pojo.DataProvider;
 import com.inamik.text.tables.Cell;

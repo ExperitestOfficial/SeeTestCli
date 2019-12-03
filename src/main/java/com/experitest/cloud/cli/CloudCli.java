@@ -8,7 +8,8 @@ import picocli.CommandLine;
                 Devices.class,
                 Users.class,
                 Projects.class,
-                Groups.class
+                Groups.class,
+                Reporter.class
         }, description = {"SeeTest cloud command line tool"}, version = {"cc 1.0"}, name = "cc", mixinStandardHelpOptions = true
 )
 public class CloudCli implements Runnable{

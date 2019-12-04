@@ -5,7 +5,8 @@ import picocli.CommandLine;
 @CommandLine.Command(
 		subcommands = {
 				ProjectsList.class,
-				ProjectClean.class
+				ProjectClean.class,
+				ProjectsChangeDeviceGroup.class
 		}, description = {"Projects operations"},
 		name = "projects"
 )

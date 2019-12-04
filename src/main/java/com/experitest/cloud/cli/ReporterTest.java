@@ -26,7 +26,7 @@ public class ReporterTest implements Runnable{
 
     public void run(){
         try (Cloud cloud = CloudUtils.getCloud()) {
-            System.out.println(cloud.reporter(reporterUrl).getText(projectName, testId));
+            System.out.println(cloud.reporter(reporterUrl).getTest(projectName, testId));
 
         } catch (IOException ex){
             ex.printStackTrace();

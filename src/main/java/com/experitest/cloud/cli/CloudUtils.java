@@ -5,6 +5,7 @@ import com.experitest.cloud.v2.Cloud;
 import com.experitest.cloud.v2.CloudClientDebug;
 import com.experitest.cloud.v2.ProxyInformation;
 import com.experitest.cloud.v2.pojo.DataProvider;
+import com.experitest.cloud.v2.pojo.Project;
 import com.inamik.text.tables.Cell;
 import com.inamik.text.tables.GridTable;
 import com.inamik.text.tables.grid.Border;
@@ -47,6 +48,19 @@ public class CloudUtils {
 		}
 		Cloud cloud = new Cloud(cloudUrl, new AccessKeyCloudAuthentication(accessKey), proxyInformation);
 		return cloud;
+	}
+
+	public static int projectNameToId(Cloud cloud, String name){
+		try {
+			return Integer.parseInt(name);
+		} catch (Exception ignore){}
+		List<Project> projects = cloud.projects().get();
+		for(Project p: projects){
+			if(name.equalsIgnoreCase(p.getName())){
+				return (int)p.getId();
+			}
+		}
+		return -1;
 	}
 	public static void printAsTable(String filter, boolean csv, List<?> list, String...fields){
 		if(fields == null){

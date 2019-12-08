@@ -21,13 +21,16 @@ public class ReporterTestsList implements Runnable{
     private String reporterUrl;
 
 
-    @CommandLine.Option(names = {"-p"}, description = {"Project ID"}, required = true, type = {Integer.class})
-    private int projectId;
+    @CommandLine.Option(names = {"-p"}, description = {"Project ID/Name"}, required = true)
+    private String projectId;
 
     public void run(){
         try (Cloud cloud = CloudUtils.getCloud()) {
-            List<ReporterTest> projects = cloud.reporter(reporterUrl).getTests(projectId);
-
+            int pid = CloudUtils.projectNameToId(cloud, projectId);
+            if(pid == -1){
+                throw new RuntimeException("Fail to find project: " + projectId);
+            }
+            List<ReporterTest> projects = cloud.reporter(reporterUrl).getTests(pid);
             CloudUtils.printAsTable(filter, csv, projects, "test_id", "name", "start_time", "duration", "status");
         } catch (IOException ex){
             ex.printStackTrace();

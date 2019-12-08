@@ -18,13 +18,17 @@ import java.util.List;
 )
 public class ProjectsChangeDeviceGroup implements Runnable{
 
-    @Option(names = "-pid", description = "Project ID", type = {Integer.class}, required = true)
-    int projectId = 0;
+    @Option(names = "-pid", description = "Project ID/Project Name", required = true)
+    String projectId = null;
     @Option(names = "-gid", description = "Device Group ID", type = {Integer.class}, required = true)
     int deviceGroupId = 0;
     public void run(){
         try (Cloud cloud = CloudUtils.getCloud()) {
-            cloud.projects().setDeviceGroup(projectId, deviceGroupId);
+            int pid = CloudUtils.projectNameToId(cloud, projectId);
+            if(pid == -1){
+                throw new RuntimeException("Fail to find project: " + projectId);
+            }
+            cloud.projects().setDeviceGroup(pid, deviceGroupId);
         } catch (IOException ex){
             ex.printStackTrace();
             throw new RuntimeException("Fail to init cloud connection");

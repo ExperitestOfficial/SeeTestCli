@@ -29,6 +29,7 @@ public class ProjectsChangeDeviceGroup implements Runnable{
                 throw new RuntimeException("Fail to find project: " + projectId);
             }
             cloud.projects().setDeviceGroup(pid, deviceGroupId);
+            System.out.println("Done!");
         } catch (IOException ex){
             ex.printStackTrace();
             throw new RuntimeException("Fail to init cloud connection");

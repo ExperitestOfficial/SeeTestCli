@@ -16,7 +16,8 @@ gradlew build customFatJar
 3. Use
 ```
 cd cli
-cc
+for MAC/Linux
+chmod +x cc
 ```
 4. Configure your cloud
 ```

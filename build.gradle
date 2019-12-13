@@ -50,6 +50,10 @@ task copyCli () {
         from "cc.bat"
         into "cli"
     }
+    copy {
+        from "cc"
+        into "cli"
+    }
 
 }
 task cliZip(type: Zip, dependsOn: copyCli){

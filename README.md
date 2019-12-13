@@ -20,7 +20,7 @@ cc
 ```
 4. Configure your cloud
 ```
-cc configure add -k -u <Cloud URL> -k <access key> -n <cloud name>
+cc configure add -u <Cloud URL> -k <access key> -n <cloud name>
 ```
 5 Example use (show all my iOS devices)
 ```

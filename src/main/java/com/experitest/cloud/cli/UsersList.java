@@ -30,7 +30,7 @@ public class UsersList implements Runnable{
                    u.setProjectString(buf.substring(0, buf.length() - 1));
                 }
             }
-            CloudUtils.printAsTable(filter, csv, users, "id", "username", "email", "role", "projectstring");
+            CloudUtils.printAsTable(filter, csv, users, "id", "username", "email", "role", "projectstring", "lastauthentication");
         } catch (IOException ex){
             ex.printStackTrace();
             throw new RuntimeException("Fail to init cloud connection");

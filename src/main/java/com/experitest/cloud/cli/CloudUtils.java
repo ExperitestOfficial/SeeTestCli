@@ -13,12 +13,11 @@ import com.inamik.text.tables.grid.Util;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class CloudUtils {
 	public static Cloud getCloud() throws IOException {
@@ -144,5 +143,23 @@ public class CloudUtils {
 			Util.print(g);
 		}
 
+	}
+	public static void saveToFile(String fileName, String content) throws IOException{
+		if(fileName.contains("${data}")){
+			Date date = new Date();
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
+			String strDate= formatter.format(date);
+			fileName = fileName.replace("${data}", strDate);
+		}
+		if(fileName.contains("${time}")){
+			Date date = new Date();
+			SimpleDateFormat formatter = new SimpleDateFormat("HHmm");
+			String strDate= formatter.format(date);
+			fileName = fileName.replace("${time}", strDate);
+		}
+		File file = new File(fileName);
+		try (FileWriter writer = new FileWriter(file)){
+			writer.write(content);
+		}
 	}
 }

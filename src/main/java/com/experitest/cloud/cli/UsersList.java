@@ -18,6 +18,10 @@ public class UsersList implements Runnable{
     private String filter;
     @CommandLine.Option(names = {"-csv"}, description = {"Comma separated list"}, required = false)
     private boolean csv = false;
+
+    @CommandLine.Option(names = {"-file"}, description = {"Save output to file"}, required = false)
+    private String file;
+
     public void run(){
         try (Cloud cloud = CloudUtils.getCloud()) {
             List<User> users = cloud.users().get();
@@ -33,6 +37,7 @@ public class UsersList implements Runnable{
                 }
             }
             if (b) {
+                StringBuilder content = new StringBuilder();
                 for(User user: users){
                     String[] userStatus = user.getData("userstatus");
                     StringBuilder buf = new StringBuilder();
@@ -42,10 +47,23 @@ public class UsersList implements Runnable{
                     buf.append("|");
                     buf.append(user.getRole());
                     buf.append("||||||");
-                    buf.append(user.getRole());
+                    buf.append("User");
                     buf.append("|||");
                     buf.append("user".equalsIgnoreCase(user.getRole())? "N": "Y");
-                    System.out.println(buf.toString());
+                    String line = buf.toString();
+                    if(filter != null){
+                        if(line.contains(filter)){
+                            content.append(buf.toString());
+                            content.append("\n");
+                        }
+                    } else {
+                        content.append(buf.toString());
+                        content.append("\n");
+                    }
+                }
+                System.out.println(content.toString());
+                if(file != null){
+                    CloudUtils.saveToFile(file, content.toString());
                 }
             } else {
                 CloudUtils.printAsTable(filter, csv, users, "id", "username", "email", "role", "projectstring", "lastauthentication", "userstatus");

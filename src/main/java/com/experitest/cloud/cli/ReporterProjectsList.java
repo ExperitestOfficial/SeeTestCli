@@ -20,11 +20,17 @@ public class ReporterProjectsList implements Runnable{
     @CommandLine.Option(names = {"-r"}, description = {"Reporter URL"}, required = false)
     private String reporterUrl;
 
+    @CommandLine.Option(names = "-more", description = "More fields (comma separated)")
+    String more = null;
     public void run(){
+        String[] moreFields = new String[0];
+        if(more != null && !more.isEmpty()){
+            moreFields = more.split(",");
+        }
         try (Cloud cloud = CloudUtils.getCloud()) {
             List<ReporterProject> projects = cloud.reporter(reporterUrl).getProjects();
 
-            CloudUtils.printAsTable(filter, csv, projects, "id", "name", "created", "attachmentsCurrentTotalSize", "attachmentsMaxAllowedSize");
+            CloudUtils.printAsTable(filter, csv, projects, moreFields, "id", "name", "created", "attachmentsCurrentTotalSize", "attachmentsMaxAllowedSize");
         } catch (IOException ex){
             ex.printStackTrace();
             throw new RuntimeException("Fail to init cloud connection");

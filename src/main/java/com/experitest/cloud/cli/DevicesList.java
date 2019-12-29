@@ -17,8 +17,13 @@ public class DevicesList implements Runnable{
     private String filter;
     @CommandLine.Option(names = {"-csv"}, description = {"Comma separated list"}, required = false)
     private boolean csv = false;
-    @Option(names = "-a", description = "Advance") boolean advance = false;
+    @Option(names = "-more", description = "More fields (comma separated)")
+    String more = null;
     public void run(){
+        String[] moreFields = new String[0];
+        if(more != null && !more.isEmpty()){
+            moreFields = more.split(",");
+        }
         try (Cloud cloud = CloudUtils.getCloud()) {
             List<Device> devices = cloud.devices().get(true);
             for(Device d: devices){
@@ -26,7 +31,7 @@ public class DevicesList implements Runnable{
                     d.setGroups(Arrays.toString(d.getDeviceGroupNames()));
                 }
             }
-            CloudUtils.printAsTable(filter, csv, devices, "id", "name", "os", "osversion","status", "currentuser", "currentagentname", "defaultwifissid", "groups");
+            CloudUtils.printAsTable(filter, csv, devices, moreFields,"id", "name", "os", "osversion","status", "currentuser", "currentagentname", "defaultwifissid", "groups");
         } catch (IOException ex){
             ex.printStackTrace();
             throw new RuntimeException("Fail to init cloud connection");

@@ -23,7 +23,13 @@ public class ProjectsList implements Runnable{
     int reservations = 0;
     @CommandLine.Option(names = {"-csv"}, description = {"Comma separated list"}, required = false)
     private boolean csv = false;
+    @Option(names = "-more", description = "More fields (comma separated)")
+    String more = null;
     public void run(){
+        String[] moreFields = new String[0];
+        if(more != null && !more.isEmpty()){
+            moreFields = more.split(",");
+        }
         try (Cloud cloud = CloudUtils.getCloud()) {
             List<Project> projects = cloud.projects().get();
             for(Project p: projects){
@@ -44,10 +50,10 @@ public class ProjectsList implements Runnable{
                         }
                     }
                 }
-                CloudUtils.printAsTable(filter, csv, projects, "id", "name", "date", "amountofusers",
+                CloudUtils.printAsTable(filter, csv, projects, moreFields,"id", "name", "date", "amountofusers",
                         "deviceGroupsForDisplay", "reservations");
             } else {
-                CloudUtils.printAsTable(filter,csv,  projects, "id", "name", "date", "amountofusers",
+                CloudUtils.printAsTable(filter,csv,  projects,moreFields, "id", "name", "date", "amountofusers",
                         "deviceGroupsForDisplay");
             }
         } catch (IOException ex){

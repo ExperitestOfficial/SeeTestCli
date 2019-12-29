@@ -22,7 +22,13 @@ public class UsersList implements Runnable{
     @CommandLine.Option(names = {"-file"}, description = {"Save output to file"}, required = false)
     private String file;
 
+    @CommandLine.Option(names = "-more", description = "More fields (comma separated)")
+    String more = null;
     public void run(){
+        String[] moreFields = new String[0];
+        if(more != null && !more.isEmpty()){
+            moreFields = more.split(",");
+        }
         try (Cloud cloud = CloudUtils.getCloud()) {
             List<User> users = cloud.users().get();
             for (User u : users) {
@@ -66,7 +72,7 @@ public class UsersList implements Runnable{
                     CloudUtils.saveToFile(file, content.toString());
                 }
             } else {
-                CloudUtils.printAsTable(filter, csv, users, "id", "username", "email", "role", "projectstring", "lastauthentication", "userstatus");
+                CloudUtils.printAsTable(filter, csv, users, moreFields,"id", "username", "email", "role", "projectstring", "lastauthentication", "userstatus");
             }
         } catch (IOException ex){
             ex.printStackTrace();

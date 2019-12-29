@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class CloudUtils {
 	public static Cloud getCloud() throws IOException {
@@ -61,19 +62,41 @@ public class CloudUtils {
 		}
 		return -1;
 	}
-	public static void printAsTable(String filter, boolean csv, List<?> list, String...fields){
+	public static void printAsTable(String filter, boolean csv, List<?> list, String[] more, String...fields){
 		if(fields == null){
 			return;
+		}
+		if(more == null){
+			more = new String[0];
 		}
 		ArrayList<String[]> elements = new ArrayList<>();
 		ArrayList<String[]> elementsFiltered = new ArrayList<>();
 		if(list.size() > 0 && list.get(0) instanceof DataProvider){
 			for(Object o: list){
-				elements.add(((DataProvider)o).getData(fields));
+				String[] values = new String[fields.length + more.length];
+				String[] dp = ((DataProvider)o).getData(fields);
+				System.arraycopy(dp, 0, values, 0, dp.length);
+				for (int j = 0; j < more.length; j++) {
+					Method[] methods = o.getClass().getMethods();
+					String value = "N/A";
+					for (Method m : methods) {
+						if ((m.getName().equalsIgnoreCase("get" + more[j]) || m.getName().equalsIgnoreCase("is" + more[j])) &&
+								m.getParameters().length == 0 && !m.getReturnType().equals(Void.TYPE)) {
+							try {
+								value = String.valueOf(m.invoke(o));
+								break;
+							} catch (Exception ignore) {
+							}
+						}
+					}
+					values[dp.length + j] = value;
+				}
+				elements.add(values);
 			}
 		} else {
 			for (int i = 0; i < list.size(); i++) {
-				String[] values = new String[fields.length];
+				String[] values = new String[fields.length + more.length];
+
 				Object o = list.get(i);
 				for (int j = 0; j < fields.length; j++) {
 					Method[] methods = o.getClass().getMethods();
@@ -90,9 +113,26 @@ public class CloudUtils {
 					}
 					values[j] = value;
 				}
+				for (int j = 0; j < more.length; j++) {
+					Method[] methods = o.getClass().getMethods();
+					String value = "N/A";
+					for (Method m : methods) {
+						if ((m.getName().equalsIgnoreCase("get" + more[j]) || m.getName().equalsIgnoreCase("is" + more[j])) &&
+								m.getParameters().length == 0 && !m.getReturnType().equals(Void.TYPE)) {
+							try {
+								value = String.valueOf(m.invoke(o));
+								break;
+							} catch (Exception ignore) {
+							}
+						}
+					}
+					values[fields.length + j] = value;
+				}
 				elements.add(values);
 			}
 		}
+		fields = Stream.concat(Arrays.stream(fields), Arrays.stream(more))
+				.toArray(String[]::new);
 		if(filter != null){
 			String[] filters = filter.toLowerCase().split(",");
 			for(String[] line: elements){
@@ -111,6 +151,7 @@ public class CloudUtils {
 		} else {
 			elementsFiltered = elements;
 		}
+
 		if(elementsFiltered.size() > 1000 || csv){
 			for (int i = 0; i < fields.length; i++) {
 				System.out.print(fields[i]);

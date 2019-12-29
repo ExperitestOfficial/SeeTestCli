@@ -24,14 +24,20 @@ public class ReporterTestsList implements Runnable{
     @CommandLine.Option(names = {"-p"}, description = {"Project ID/Name"}, required = true)
     private String projectId;
 
+    @CommandLine.Option(names = "-more", description = "More fields (comma separated)")
+    String more = null;
     public void run(){
+        String[] moreFields = new String[0];
+        if(more != null && !more.isEmpty()){
+            moreFields = more.split(",");
+        }
         try (Cloud cloud = CloudUtils.getCloud()) {
             int pid = CloudUtils.projectNameToId(cloud, projectId);
             if(pid == -1){
                 throw new RuntimeException("Fail to find project: " + projectId);
             }
             List<ReporterTest> projects = cloud.reporter(reporterUrl).getTests(pid);
-            CloudUtils.printAsTable(filter, csv, projects, "test_id", "name", "start_time", "duration", "status");
+            CloudUtils.printAsTable(filter, csv, projects, moreFields, "test_id", "name", "start_time", "duration", "status");
         } catch (IOException ex){
             ex.printStackTrace();
             throw new RuntimeException("Fail to init cloud connection");

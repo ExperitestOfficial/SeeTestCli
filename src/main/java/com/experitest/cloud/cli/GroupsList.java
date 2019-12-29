@@ -15,10 +15,16 @@ public class GroupsList implements Runnable{
     private String filter;
     @CommandLine.Option(names = {"-csv"}, description = {"Comma separated list"}, required = false)
     private boolean csv = false;
+    @CommandLine.Option(names = "-more", description = "More fields (comma separated)")
+    String more = null;
     public void run(){
+        String[] moreFields = new String[0];
+        if(more != null && !more.isEmpty()){
+            moreFields = more.split(",");
+        }
         try (Cloud cloud = CloudUtils.getCloud()) {
             List<DeviceGroup> groups = cloud.deviceGroups().getAll();
-            CloudUtils.printAsTable(filter, csv, groups, "id", "name", "type", "numberOfDevices", "devices");
+            CloudUtils.printAsTable(filter, csv, groups, moreFields,"id", "name", "type", "numberOfDevices", "devices");
         } catch (IOException ex){
             ex.printStackTrace();
             throw new RuntimeException("Fail to init cloud connection");

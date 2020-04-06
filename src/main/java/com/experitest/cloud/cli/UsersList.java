@@ -14,6 +14,8 @@ import java.util.List;
 public class UsersList implements Runnable{
     @CommandLine.Option(names = {"-b"}, description = {""}, required = false)
     private boolean b;
+    @CommandLine.Option(names = {"-internal"}, description = {""}, required = false)
+    private String internal;
     @CommandLine.Option(names = {"-f"}, description = {"Comma separated list"}, required = false)
     private String filter;
     @CommandLine.Option(names = {"-csv"}, description = {"Comma separated list"}, required = false)
@@ -52,6 +54,14 @@ public class UsersList implements Runnable{
                     buf.append(user.getUsername());
                     buf.append("|");
                     buf.append(user.getRole());
+                    if(internal != null && !internal.isEmpty()){
+                        buf.append(",");
+                        if(user.getEmail().contains(internal)){
+                            buf.append("Internal");
+                        } else {
+                            buf.append("External");
+                        }
+                    }
                     buf.append("||||||");
                     buf.append("User");
                     buf.append("|||");
